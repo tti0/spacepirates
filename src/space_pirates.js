@@ -37,8 +37,8 @@ var SHIP = 4;
 //keyboard constants
 var UP = 38;
 var DOWN = 40;
-var LEFT = 39;
-var RIGHT = 37;
+var RIGHT = 39;
+var LEFT = 37;
 
 //other constants
 var SIZE = 64;
@@ -46,9 +46,8 @@ var SIZE = 64;
 //dependent constants
 var ROWS = space.length;
 var COLUMNS = space[0].length;
-var shipRow;
 var shipColumn;
-/*
+var shipRow;
 for(var row = 0; row < ROWS; row++) {
     for(var column = 0; column <COLUMNS; column++) {
       if(gameObjects[row][column] == SHIP) {
@@ -57,7 +56,6 @@ for(var row = 0; row < ROWS; row++) {
       }
     }
 }
-*/
 render();
 
 function render() {
@@ -106,23 +104,41 @@ function render() {
 }
 
 function keydownHandler(event) {
-  switch(event.keycode){
+  switch(event.keyCode){
     case UP:
       //move ship up one row in gameObjects array
+      if(shipRow>0) {
+        gameObjects[shipRow][shipColumn] = 0;
+        shipRow--;
+      }
       break;
       
     case DOWN:
       //move ship down one row in gameObjects array
+      if(shipRow<ROWS-1) {
+        gameObjects[shipRow][shipColumn] = 0;
+        shipRow++;
+      }
       break;
       
     case LEFT:
       //move ship left one col in gameObjects array
+      if(shipColumn>0) {
+        gameObjects[shipRow][shipColumn] = 0;
+        shipColumn--;
+      }
       break;
     
     case RIGHT:
       //move ship right one col in gameObjects array
+      if(shipColumn<COLUMNS-1) {
+        gameObjects[shipRow][shipColumn] = 0;
+        shipColumn++;
+      }
       break;
   }
+  
+  gameObjects[shipRow][shipColumn] = SHIP;
   
   //render the game
   render();
