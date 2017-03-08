@@ -4,6 +4,9 @@
 var map = document.getElementById("map");
 var message = document.getElementById("message");
 
+//event listeners
+window.addEventListener("keydown", keydownHandler, false);
+
 var space = 
 [
   [0,2,0,0,0,3],
@@ -31,6 +34,12 @@ var PIRATE = 2;
 var HOMEWORLD = 3;
 var SHIP = 4;
 
+//keyboard constants
+var UP = 38;
+var DOWN = 40;
+var LEFT = 39;
+var RIGHT = 37;
+
 //other constants
 var SIZE = 64;
 
@@ -39,7 +48,7 @@ var ROWS = space.length;
 var COLUMNS = space[0].length;
 var shipRow;
 var shipColumn;
-
+/*
 for(var row = 0; row < ROWS; row++) {
     for(var column = 0; column <COLUMNS; column++) {
       if(gameObjects[row][column] == SHIP) {
@@ -48,7 +57,7 @@ for(var row = 0; row < ROWS; row++) {
       }
     }
 }
-
+*/
 render();
 
 function render() {
@@ -94,4 +103,27 @@ function render() {
       cell.style.left = column*SIZE+"px";
     }
   }
+}
+
+function keydownHandler(event) {
+  switch(event.keycode){
+    case UP:
+      //move ship up one row in gameObjects array
+      break;
+      
+    case DOWN:
+      //move ship down one row in gameObjects array
+      break;
+      
+    case LEFT:
+      //move ship left one col in gameObjects array
+      break;
+    
+    case RIGHT:
+      //move ship right one col in gameObjects array
+      break;
+  }
+  
+  //render the game
+  render();
 }
