@@ -9,8 +9,11 @@ body
 {
   margin: 0;
   padding: 0;
-  text-align: center;
   background-image: url("../images/bg_2500x920px.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
   font-family: 'Montserrat', sans-serif;
 }
 
@@ -20,8 +23,8 @@ body
   width: 384px;
   height:384px;
   background-image: url("../images/background_384x384px.png");
-      margin: 0 auto;
-    text-align: left;
+  margin: 0 auto;
+  text-align: left;
  }
 
  .cell
@@ -32,12 +35,34 @@ body
    height: 64px;
  }
  
- p
+ #message
  {
-   width: 400px;
+   text-align: center;
+   font-size: 16pt;
+   background-color: #001c54;
+   opacity: 0.7;
+   color: #fff;
+   padding: 20px;
+ }
+ 
+ #counters
+ {
+   text-align: left;
+   font-size: 16pt;
+   background-color: #8e0028;
+   opacity: 0.7;
+   color: #fff;
+   padding: 20px;
  }
 
+  #countersHeader
+  {
+    font-size: 20pt;
+    text-align: center;
+  }
+  
 h1
 {
-  font-size: 36pt;
+  font-size: 50pt;
+  text-align: center;
 }
