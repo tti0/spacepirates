@@ -3,6 +3,11 @@
 //environment variables
 var map = document.getElementById("map");
 var message = document.getElementById("message");
+var statXP = document.getElementById("statXP");
+var statCredits = document.getElementById("statCredits");
+var statBounty = document.getElementById("statBounty");
+var statFuel = document.getElementById("statFuel");
+var messageSay;
 
 //event listeners
 window.addEventListener("keydown", keydownHandler, false);
@@ -56,6 +61,14 @@ for(var row = 0; row < ROWS; row++) {
       }
     }
 }
+
+//game vars
+var fuel = 10;
+var credits = 10;
+var xp = 0;
+messageSay = "Use the arrow keys to travel around.<br>Return home and pay off the bounty on your head!"
+var bounty = 50;
+
 render();
 
 function render() {
@@ -65,7 +78,13 @@ function render() {
       map.removeChild(map.firstChild);
     }
   }
-  message.innerHTML="Here!";
+  
+  message.innerHTML=messageSay;
+  statBounty.innerHTML=bounty;
+  statXP.innerHTML=xp;
+  statFuel.innerHTML=fuel;
+  statCredits.innerHTML=credits;
+  
   //Render new map by looping through map arrays
   for(var row = 0; row < ROWS; row++) {
     for(var column = 0; column <COLUMNS; column++) {
@@ -140,6 +159,75 @@ function keydownHandler(event) {
   
   gameObjects[shipRow][shipColumn] = SHIP;
   
+  //check what cell the ship is in
+  switch(space[shipRow][shipColumn]) {
+    case SPACE:
+      messageSay = "You cruise through cyberspace.";
+      break;
+      
+    case PIRATE:
+      fight();
+      break;
+      
+    case PLANET:
+      trade();
+      break;
+      
+    case HOMEWORLD:
+      endGame();
+      break;
+  }
+  
+  //burn fuel
+  fuel--;
+  
+  //check if the player is out of fuel or credits
+  if(fuel <= 0 || credits <= 0) {
+    endGame;
+  }
+  
   //render the game
   render();
+}
+
+function plural(number) {
+  if(number>1){return "s";}
+  return "";
+}
+
+function fight() {
+  var attack = Math.ceil((fuel + credits + xp) / 2);
+  var defence = Math.ceil(Math.random() * attack * 2);
+  var penalty = Math.round(defence / 2);
+  
+  messageSay = "Your attack: " + attack + "<br>Their defence: " + defence;
+  
+  if(attack>=defence) {
+    credits += penalty;
+    xp += 2;
+    messageSay = "You fight and WIN " + penalty + " credit" + plural(penalty) + ".";
+  } else {
+    credits -= penalty;
+    xp += 1;
+    messageSay = "You fight and LOOSE " + penalty + " credit" + plural(penalty) + ".";
+  }
+}
+
+function trade() {
+  var planetFuel = xp + credits;
+  var cost = Math.ceil(Math.random()*planetFuel);
+  
+  if(credits>cost) {
+    fuel += planetFuel;
+    credits -= cost;
+    xp += 2;
+    messageSay = "You buy " + planetFuel + " fuel cell" + plural(planetFuel) + " for " + cost + " credit" + plural(cost) + ".";
+  } else {
+    xp += 1;
+    messageSay = "You don't have enough credits to buy fuel here.";
+  }
+}
+
+function endGame() {
+  
 }
