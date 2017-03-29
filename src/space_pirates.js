@@ -8,6 +8,7 @@ var statCredits = document.getElementById("statCredits");
 var statBounty = document.getElementById("statBounty");
 var statFuel = document.getElementById("statFuel");
 var messageSay;
+var messageMood = 0;
 
 //event listeners
 window.addEventListener("keydown", keydownHandler, false);
@@ -66,7 +67,8 @@ for(var row = 0; row < ROWS; row++) {
 var fuel = 10;
 var credits = 10;
 var xp = 0;
-messageSay = "Use the arrow keys to travel around.<br>Return home and pay off the bounty on your head!"
+messageSay = "Use the arrow keys to travel around.<br>Return home and pay off the bounty on your head!";
+var messageMood = 0;
 var bounty = 50;
 
 render();
@@ -120,6 +122,22 @@ function render() {
       cell.style.left = column*SIZE+"px";
     }
   }
+  
+  //set bg color of message box
+  switch(messageMood){
+    case 0: //neutral
+      document.getElementById("message").style.backgroundColor = "#001c54";
+      break;
+    case 1: //notify
+      document.getElementById("message").style.backgroundColor = "#efefef";
+      break;
+    case 2: //positive
+      document.getElementById("message").style.backgroundColor = "#328727";
+      break;
+    case 3: //negative
+      document.getElementById("message").style.backgroundColor = "#840606";
+      break;
+  }
 }
 
 function keydownHandler(event) {
@@ -129,6 +147,8 @@ function keydownHandler(event) {
       if(shipRow>0) {
         gameObjects[shipRow][shipColumn] = 0;
         shipRow--;
+        //burn fuel
+        fuel--;
       }
       break;
       
@@ -137,6 +157,8 @@ function keydownHandler(event) {
       if(shipRow<ROWS-1) {
         gameObjects[shipRow][shipColumn] = 0;
         shipRow++;
+        //burn fuel
+        fuel--;
       }
       break;
       
@@ -145,6 +167,8 @@ function keydownHandler(event) {
       if(shipColumn>0) {
         gameObjects[shipRow][shipColumn] = 0;
         shipColumn--;
+        //burn fuel
+        fuel--;
       }
       break;
     
@@ -153,6 +177,8 @@ function keydownHandler(event) {
       if(shipColumn<COLUMNS-1) {
         gameObjects[shipRow][shipColumn] = 0;
         shipColumn++;
+        //burn fuel
+        fuel--;
       }
       break;
   }
@@ -174,16 +200,14 @@ function keydownHandler(event) {
       break;
       
     case HOMEWORLD:
-      endGame();
+      endGame("HOME");
       break;
   }
-  
-  //burn fuel
-  fuel--;
+
   
   //check if the player is out of fuel or credits
   if(fuel <= 0 || credits <= 0) {
-    endGame;
+    endGame("FUEL");
   }
   
   //render the game
@@ -196,8 +220,9 @@ function plural(number) {
 }
 
 function fight() {
+  var winProbability = 0.2;
   var attack = Math.ceil((fuel + credits + xp) / 2);
-  var defence = Math.ceil(Math.random() * attack * 2);
+  var defence = Math.ceil(Math.random() * attack / (1 - winProbability));
   var penalty = Math.round(defence / 2);
   
   messageSay = "Your attack: " + attack + "<br>Their defence: " + defence;
@@ -228,6 +253,30 @@ function trade() {
   }
 }
 
-function endGame() {
+function endGame(condition) {
+  switch(condition) {
+    case "HOME":
+      messageSay = "You made it home alive!";
+      messageMood = 2;
+      break;
+    case "FUEL":
+      messageSay = "You ran out of fuel.";
+      messageMood = 3;
+      break;   
+  }
   
+  messageSay += '<br><button id="playAgain" onclick="playAgain()">Play Again?</button>';
+  
+  //document.getElementById("playAgain").addEventListener("click",function(){message.innerHTML += ";P";}, false);
+  
+  //var playAgainButton = document.getElementById("playAgain");
+  //playAgainButton.addEventListener("click",location.reload(),false);
+  
+  window.removeEventListener("keydown", keydownHandler, false);
+  
+  render();
+}
+
+function playAgain(){
+  location.reload();
 }
