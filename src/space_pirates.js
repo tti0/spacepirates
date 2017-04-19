@@ -15,7 +15,7 @@ window.addEventListener("keydown", keydownHandler, false);
 
 var space = 
 [
-  [0,2,0,0,0,3],
+  [5,0,0,2,0,3],
   [0,0,0,1,0,0],
   [0,1,0,0,0,0],
   [0,0,0,0,2,0],
@@ -39,6 +39,7 @@ var PLANET = 1;
 var PIRATE = 2;
 var HOMEWORLD = 3;
 var SHIP = 4;
+var SHOP = 5;
 
 //keyboard constants
 var UP = 38;
@@ -67,9 +68,9 @@ for(var row = 0; row < ROWS; row++) {
 var fuel = 10;
 var credits = 10;
 var xp = 0;
-messageSay = "Use the arrow keys to travel around.<br>Return home and pay off the bounty on your head!";
+messageSay = "Use the arrow keys to travel around.<br>Before you return home, you must go to the shop and pay off the bounty on your head.";
 var messageMood = 0;
-var bounty = 50;
+var bounty = 100;
 
 render();
 
@@ -110,6 +111,9 @@ function render() {
         case HOMEWORLD:
           cell.src = "../images/homeworld_64x64px.png";
           break;
+        case SHOP:
+          cell.src = "../images/shop_64x64px.png";
+          break;
       }
       //look in the moveable objects array for this cell
       switch(gameObjects[row][column]){
@@ -149,6 +153,7 @@ function keydownHandler(event) {
         shipRow--;
         //burn fuel
         fuel--;
+        xp += 1;
       }
       break;
       
@@ -159,6 +164,7 @@ function keydownHandler(event) {
         shipRow++;
         //burn fuel
         fuel--;
+        xp += 1;
       }
       break;
       
@@ -169,6 +175,7 @@ function keydownHandler(event) {
         shipColumn--;
         //burn fuel
         fuel--;
+        xp += 1;
       }
       break;
     
@@ -179,6 +186,7 @@ function keydownHandler(event) {
         shipColumn++;
         //burn fuel
         fuel--;
+        xp += 1;
       }
       break;
   }
@@ -189,6 +197,7 @@ function keydownHandler(event) {
   switch(space[shipRow][shipColumn]) {
     case SPACE:
       messageSay = "You cruise through cyberspace.";
+      messageMood = 0;
       break;
       
     case PIRATE:
@@ -202,6 +211,9 @@ function keydownHandler(event) {
     case HOMEWORLD:
       endGame("HOME");
       break;
+      
+    case SHOP:
+      payOff();
   }
 
   
@@ -229,27 +241,44 @@ function fight() {
   
   if(attack>=defence) {
     credits += penalty;
-    xp += 2;
+    xp += 50;
     messageSay = "You fight and WIN " + penalty + " credit" + plural(penalty) + ".";
   } else {
     credits -= penalty;
-    xp += 1;
+    xp += 20;
     messageSay = "You fight and LOOSE " + penalty + " credit" + plural(penalty) + ".";
   }
 }
 
 function trade() {
-  var planetFuel = xp + credits;
+  var planetFuel = Math.ceil(Math.random()*(xp + credits));
   var cost = Math.ceil(Math.random()*planetFuel);
   
-  if(credits>cost) {
-    fuel += planetFuel;
-    credits -= cost;
-    xp += 2;
-    messageSay = "You buy " + planetFuel + " fuel cell" + plural(planetFuel) + " for " + cost + " credit" + plural(cost) + ".";
+  var r = confirm("At this planet, fuel will cost you " + cost + " credit" + plural(cost) + ".\nYou will gain " + planetFuel + " cell" + plural(planetFuel) + ".\nDo you wish to continue?");
+  
+  if (r) {
+    if(credits>cost) {
+      fuel += planetFuel;
+      credits -= cost;
+      xp += 20;
+      messageSay = "You buy " + planetFuel + " fuel cell" + plural(planetFuel) + " for " + cost + " credit" + plural(cost) + ".";
+    } else {
+      xp += 10;
+      messageSay = "You don't have enough credits to buy fuel here.";
+    }
   } else {
-    xp += 1;
-    messageSay = "You don't have enough credits to buy fuel here.";
+    return;
+  }
+  
+
+}
+
+function payOff() {
+  if (bounty == 0) {
+    messageSay = "You have already paid off your bounty!";
+    messageMood = 2;
+  } else {
+    var toPay = prompt("How much of your bounty do you wish to pay off?\nYour bounty is currently " + bounty + " credit" + plural(credits) + ".\nYou currently have " + credits + " credit" + plural(credits) + ".")
   }
 }
 
@@ -265,7 +294,7 @@ function endGame(condition) {
       break;   
   }
   
-  messageSay += '<br><button id="playAgain" onclick="playAgain()">Play Again?</button>';
+  messageSay += '<br><br><button id="playAgain" onclick="playAgain()">Play again?</button>';
   
   //document.getElementById("playAgain").addEventListener("click",function(){message.innerHTML += ";P";}, false);
   
