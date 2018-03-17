@@ -2,7 +2,7 @@
 
 //environment variables
 var map = document.getElementById("map");
-var message = document.getElementById("message");
+var message = document.getElementById("messageInside");
 var statXP = document.getElementById("statXP");
 var statCredits = document.getElementById("statCredits");
 var statBounty = document.getElementById("statBounty");
@@ -13,7 +13,7 @@ var messageMood = 0;
 //event listeners
 window.addEventListener("keydown", keydownHandler, false);
 
-var space = 
+var space =
 [
   [5,0,0,2,0,3],
   [0,0,0,1,0,0],
@@ -23,7 +23,7 @@ var space =
   [0,0,0,0,0,0]
 ];
 
-var gameObjects = 
+var gameObjects =
 [
   [0,0,0,0,0,0],
   [0,0,0,0,0,0],
@@ -81,13 +81,13 @@ function render() {
       map.removeChild(map.firstChild);
     }
   }
-  
+
   message.innerHTML=messageSay;
   statBounty.innerHTML=bounty;
   statXP.innerHTML=xp;
   statFuel.innerHTML=fuel;
   statCredits.innerHTML=credits;
-  
+
   //Render new map by looping through map arrays
   for(var row = 0; row < ROWS; row++) {
     for(var column = 0; column <COLUMNS; column++) {
@@ -126,20 +126,20 @@ function render() {
       cell.style.left = column*SIZE+"px";
     }
   }
-  
+
   //set bg color of message box
   switch(messageMood){
     case 0: //neutral
-      document.getElementById("message").style.backgroundColor = "#001c54";
+      document.getElementById("messageInside").style.backgroundColor = "#001c54";
       break;
     case 1: //notify
-      document.getElementById("message").style.backgroundColor = "#efefef";
+      document.getElementById("messageInside").style.backgroundColor = "#efefef";
       break;
     case 2: //positive
-      document.getElementById("message").style.backgroundColor = "#328727";
+      document.getElementById("messageInside").style.backgroundColor = "#328727";
       break;
     case 3: //negative
-      document.getElementById("message").style.backgroundColor = "#840606";
+      document.getElementById("messageInside").style.backgroundColor = "#840606";
       break;
   }
 }
@@ -156,7 +156,7 @@ function keydownHandler(event) {
         xp += 1;
       }
       break;
-      
+
     case DOWN:
       //move ship down one row in gameObjects array
       if(shipRow<ROWS-1) {
@@ -167,7 +167,7 @@ function keydownHandler(event) {
         xp += 1;
       }
       break;
-      
+
     case LEFT:
       //move ship left one col in gameObjects array
       if(shipColumn>0) {
@@ -178,7 +178,7 @@ function keydownHandler(event) {
         xp += 1;
       }
       break;
-    
+
     case RIGHT:
       //move ship right one col in gameObjects array
       if(shipColumn<COLUMNS-1) {
@@ -190,38 +190,38 @@ function keydownHandler(event) {
       }
       break;
   }
-  
+
   gameObjects[shipRow][shipColumn] = SHIP;
-  
+
   //check what cell the ship is in
   switch(space[shipRow][shipColumn]) {
     case SPACE:
       messageSay = "You cruise through cyberspace.";
       messageMood = 0;
       break;
-      
+
     case PIRATE:
       fight();
       break;
-      
+
     case PLANET:
       trade();
       break;
-      
+
     case HOMEWORLD:
       endGame("HOME");
       break;
-      
+
     case SHOP:
       payOff();
   }
 
-  
+
   //check if the player is out of fuel or credits
   if(fuel <= 0 || credits <= 0) {
     endGame("FUEL");
   }
-  
+
   //render the game
   render();
 }
@@ -236,9 +236,9 @@ function fight() {
   var attack = Math.ceil((fuel + credits + xp) / 2);
   var defence = Math.ceil(Math.random() * attack / (1 - winProbability));
   var penalty = Math.round(defence / 2);
-  
+
   messageSay = "Your attack: " + attack + "<br>Their defence: " + defence;
-  
+
   if(attack>=defence) {
     credits += penalty;
     xp += 50;
@@ -253,9 +253,9 @@ function fight() {
 function trade() {
   var planetFuel = Math.ceil(Math.random()*(xp + credits));
   var cost = Math.ceil(Math.random()*planetFuel);
-  
+
   var r = confirm("At this planet, fuel will cost you " + cost + " credit" + plural(cost) + ".\nYou will gain " + planetFuel + " cell" + plural(planetFuel) + ".\nDo you wish to continue?");
-  
+
   if (r) {
     if(credits>cost) {
       fuel += planetFuel;
@@ -269,7 +269,7 @@ function trade() {
   } else {
     return;
   }
-  
+
 
 }
 
@@ -291,18 +291,18 @@ function endGame(condition) {
     case "FUEL":
       messageSay = "You ran out of fuel.";
       messageMood = 3;
-      break;   
+      break;
   }
-  
+
   messageSay += '<br><br><button id="playAgain" onclick="playAgain()">Play again?</button>';
-  
+
   //document.getElementById("playAgain").addEventListener("click",function(){message.innerHTML += ";P";}, false);
-  
+
   //var playAgainButton = document.getElementById("playAgain");
   //playAgainButton.addEventListener("click",location.reload(),false);
-  
+
   window.removeEventListener("keydown", keydownHandler, false);
-  
+
   render();
 }
 

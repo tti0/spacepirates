@@ -1,43 +1,58 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Space Pirates</title>
-<link rel="stylesheet" type="text/css" href="space_pirates.css">
-</head>
 
-<body>
-<h1>Space Pirates</h1>
-<div align="center" id="map"></div>
-<p id="message"></p>
-<div id="counters">
-<p id="countersHeader"><strong>Statistics</strong></p>
-<table style="width:100%">
-  <tr>
-    <td><b>Statistic</b></td>
-    <td><b>Value</b></td>
-  </tr>
-  <tr>
-    <td>XP</td>
-    <td id="statXP">Value</td>
-  </tr>
-  <tr>
-    <td>Bounty</td>
-    <td id="statBounty">Value</td>
-  </tr>
-  <tr>
-    <td>Credits</td>
-    <td id="statCredits">Value</td>
-  </tr>
-  <tr>
-    <td>Fuel</td>
-    <td id="statFuel">Value</td>
-  </tr>
-</table>
-</div>
-<p id="copyright"></p>
+  <head>
+    <meta charset="UTF-8">
+    <title>Space Pirates</title>
+    <link rel="stylesheet" type="text/css" href="pure-base.css">
+    <link rel="stylesheet" type="text/css" href="pure-grids.css">
+    <link rel="stylesheet" type="text/css" href="space_pirates.css">
+  </head>
 
-</body>
+  <body>
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <h1>Space Pirates</h1>
+      </div>
+      <div class="pure-u-1-2">
+        <div align="center" id="map"></div>
+      </div>
+      <div class="pure-u-1-2">
+        <div id="message">
+          <div id="messageInside"></div>
+        </div>
+        <div id="counters">
+          <div id="countersInside">
+            <p id="countersHeader"><strong>Statistics</strong></p>
+            <table style="width:100%">
+              <tr>
+                <td><b>Statistic</b></td>
+                <td><b>Value</b></td>
+              </tr>
+              <tr>
+                <td>XP</td>
+                <td id="statXP">Value</td>
+              </tr>
+              <tr>
+                <td>Bounty</td>
+                <td id="statBounty">Value</td>
+              </tr>
+              <tr>
+                <td>Credits</td>
+                <td id="statCredits">Value</td>
+              </tr>
+              <tr>
+                <td>Fuel</td>
+                <td id="statFuel">Value</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p id="copyright"></p>
+    </div>
+  </body>
 
-<script type="text/javascript" src="space_pirates.js"></script>
+  <script type="text/javascript" src="space_pirates.js"></script>
+
 </html>
