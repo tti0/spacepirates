@@ -10,6 +10,15 @@ var statFuel = document.getElementById("statFuel");
 var messageSay;
 var messageMood = 0;
 
+//audio setup variables
+var audio_bell = new Audio ('../audio/bell.wav');
+var audio_crash = new Audio ('../audio/crash.wav');
+var audio_fight = new Audio ('../audio/fight.wav');
+var audio_fillup = new Audio ('../audio/fillup.wav');
+var audio_lose = new Audio ('../audio/lose.wav');
+var audio_win = new Audio ('../audio/win.wav');
+var audio_woosh = new Audio ('../audio/woosh.wav');
+
 //event listeners
 window.addEventListener("keydown", keydownHandler, false);
 
