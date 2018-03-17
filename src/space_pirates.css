@@ -26,8 +26,8 @@ body
 #map
 {
   position:relative;
-  width: 384px;
-  height:384px;
+  width: 448px;
+  height:448px;
   background-image: url("../images/background_384x384px.png");
   margin: 0 auto;
   text-align: left;
