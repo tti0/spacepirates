@@ -2,12 +2,14 @@
 
 A basic RPG using HTML, CSS and JavaScript. Note that this game will not work on mobile devices.
 
+Live demo: https://tti0.github.io/spacepirates/
+
 ## Instructions
 
 You are the spaceship, and are trying to return to your home planet (Earth). However there is a bounty on your head, which you need to pay off at the shop before you can return home. Naviagte around the grid using the arrow keys. Each move will use up 1 credit.
 You encounter the following things in the game:
-- **The shop:** This is where you will pay off your bounty with credits before returning home.
-- **Pirates:** To earn credits, you need to fight pirates. You will not know if you will win or lose before you fight, and could run out of credits.
+- **The shop:** This is where you will pay off your bounty with credits before returning home. As you gain more XP, fuel prices increase.
+- **Pirates:** To earn credits, you need to fight pirates. You will not know if you will win or lose before you fight, and could run out of credits. As you gain more XP, the fights get riskier!
 - **Planet:** This is where you can re-fuel your ship. The price of fuel will be displayed before you purchase.
 - **Home:** The planet Earth, your goal.
 

@@ -249,22 +249,22 @@ function plural(number) {
 }
 
 function fight() {
-  var winProbability = 0.2;
+  var winProbability = 0.6;
   var attack = Math.ceil((fuel + credits + (2 * xp) / 2));
   var defence = Math.ceil(Math.random() * attack / (1 - winProbability));
-  var penalty = Math.round(defence / 2);
-  console.log(attack);
-  console.log(defence);
+  var penalty = Math.round((Math.round(defence / 2)) / 2);
   if (attack>=defence) {
     playSfx("audio_fight_win");
-    credits += Math.floor(1 / penalty);
+    credits += penalty;
     xp += 5 * (attack - defence);
     messageSay = "You fight and WIN " + penalty + " credit" + plural(penalty) + ".";
+    messageMood = 2;
   } else {
     playSfx("audio_fight_win");
-    credits -= Math.floor(1 / penalty);
+    credits -= penalty;
     xp += 2 * (0 - attack - defence);
-    messageSay = "You fight and LOOSE " + penalty + " credit" + plural(penalty) + ".";
+    messageSay = "You fight and LOOSE " + penalty + " credit" + plural(penalty / 3) + ".";
+    messageMood = 3;
   }
   console.log(penalty);
 }
@@ -279,6 +279,7 @@ function trade() {
       credits -= cost;
       xp += 20;
       messageSay = "You buy " + planetFuel + " fuel cell" + plural(planetFuel) + " for " + cost + " credit" + plural(cost) + ".";
+      playSfx("audio_fillup");
     } else {
       xp += 10;
       messageSay = "You don't have enough credits to buy fuel here.";
@@ -319,7 +320,11 @@ function payOff() {
 }
 
 function homeworld() {
-  endGame("HOME");
+  if (bounty != 0) {
+    endGame("NOPAY");
+  } else {
+    endGame("HOME");
+  }
 }
 
 function endGame(condition) {
@@ -335,7 +340,12 @@ function endGame(condition) {
       playSfx("audio_game_lose");
       break;
     case "CREDITS":
-      messageSay = "You ran out of credits and got caught by the Space Police.";
+      messageSay = "You ran out of credits and were caught by the Space Police.";
+      messageMood = 3;
+      playSfx("audio_game_lose");
+      break;
+    case "NOPAY":
+      messageSay = "You came home before you paid off your bounty. You were caught by the Space Police.";
       messageMood = 3;
       playSfx("audio_game_lose");
       break;
