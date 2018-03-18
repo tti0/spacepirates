@@ -11,13 +11,14 @@ var messageSay;
 var messageMood = 0;
 
 //audio setup variables
-var audio_bell = new Audio ('../audio/bell.wav');
-var audio_crash = new Audio ('../audio/crash.wav');
-var audio_fight = new Audio ('../audio/fight.wav');
+var audio_shop_bell = new Audio ('../audio/shop_bell.wav');
 var audio_fillup = new Audio ('../audio/fillup.wav');
-var audio_lose = new Audio ('../audio/lose.wav');
-var audio_win = new Audio ('../audio/win.wav');
+var audio_game_lose = new Audio ('../audio/game_lose.wav');
+var audio_game_win = new Audio ('../audio/game_win.wav');
 var audio_woosh = new Audio ('../audio/woosh.wav');
+var audio_fight_start = new Audio ('../audio/fight_start.wav')
+var audio_fight_win = new Audio ("../audio/fight_win.wav")
+var audio_fight_lose = new Audio ("../audio/fight_lose.wav")
 
 //event listeners
 window.addEventListener("keydown", keydownHandler, false);
@@ -29,7 +30,7 @@ var space =
   [0,1,0,0,0,0,2],
   [0,0,0,0,2,0,0],
   [0,2,0,1,0,0,0],
-  [2,0,0,0,0,0,1],
+  [0,0,0,0,0,0,1],
   [0,0,0,2,0,0,0]
 ];
 
@@ -92,13 +93,11 @@ function render() {
       map.removeChild(map.firstChild);
     }
   }
-
   message.innerHTML=messageSay;
   statBounty.innerHTML=bounty;
   statXP.innerHTML=xp;
   statFuel.innerHTML=fuel;
   statCredits.innerHTML=credits;
-
   //Render new map by looping through map arrays
   for(var row = 0; row < ROWS; row++) {
     for(var column = 0; column <COLUMNS; column++) {
@@ -137,7 +136,6 @@ function render() {
       cell.style.left = column*SIZE+"px";
     }
   }
-
   //set bg color of message box
   switch(messageMood){
     case 0: //neutral
@@ -167,7 +165,6 @@ function keydownHandler(event) {
         xp += 1;
       }
       break;
-
     case DOWN:
       //move ship down one row in gameObjects array
       if(shipRow<ROWS-1) {
@@ -178,7 +175,6 @@ function keydownHandler(event) {
         xp += 1;
       }
       break;
-
     case LEFT:
       //move ship left one col in gameObjects array
       if(shipColumn>0) {
@@ -189,7 +185,6 @@ function keydownHandler(event) {
         xp += 1;
       }
       break;
-
     case RIGHT:
       //move ship right one col in gameObjects array
       if(shipColumn<COLUMNS-1) {
@@ -201,38 +196,29 @@ function keydownHandler(event) {
       }
       break;
   }
-
   gameObjects[shipRow][shipColumn] = SHIP;
-
   //check what cell the ship is in
   switch(space[shipRow][shipColumn]) {
     case SPACE:
       messageSay = "You cruise through cyberspace.";
       messageMood = 0;
       break;
-
     case PIRATE:
       fight();
       break;
-
     case PLANET:
       trade();
       break;
-
     case HOMEWORLD:
       endGame("HOME");
       break;
-
     case SHOP:
       payOff();
   }
-
-
   //check if the player is out of fuel or credits
   if(fuel <= 0 || credits <= 0) {
     endGame("FUEL");
   }
-
   //render the game
   render();
 }
@@ -247,9 +233,7 @@ function fight() {
   var attack = Math.ceil((fuel + credits + xp) / 2);
   var defence = Math.ceil(Math.random() * attack / (1 - winProbability));
   var penalty = Math.round(defence / 2);
-
   messageSay = "Your attack: " + attack + "<br>Their defence: " + defence;
-
   if(attack>=defence) {
     credits += penalty;
     xp += 50;
@@ -264,9 +248,7 @@ function fight() {
 function trade() {
   var planetFuel = Math.ceil(Math.random()*(xp + credits));
   var cost = Math.ceil(Math.random()*planetFuel);
-
   var r = confirm("At this planet, fuel will cost you " + cost + " credit" + plural(cost) + ".\nYou will gain " + planetFuel + " cell" + plural(planetFuel) + ".\nDo you wish to continue?");
-
   if (r) {
     if(credits>cost) {
       fuel += planetFuel;
@@ -280,8 +262,6 @@ function trade() {
   } else {
     return;
   }
-
-
 }
 
 function payOff() {
@@ -289,8 +269,24 @@ function payOff() {
     messageSay = "You have already paid off your bounty!";
     messageMood = 2;
   } else {
-    var toPay = prompt("How much of your bounty do you wish to pay off?\nYour bounty is currently " + bounty + " credit" + plural(credits) + ".\nYou currently have " + credits + " credit" + plural(credits) + ".")
+    while (true) {
+      var toPay = prompt("How much of your bounty do you wish to pay off?\nYour bounty is currently " + bounty + " credit" + plural(credits) + ".\nYou currently have " + credits + " credit" + plural(credits) + ".\n(You can only pay off whole numbers.)");
+      if (typeof toPay === 'string' || toPay instanceof String) {
+        if (confirm("You did not enter a whole number. Would you like to try again?")) {
+          // do nothing
+        } else {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+    alert("After yay!");
   }
+}
+
+function homeworld() {
+
 }
 
 function endGame(condition) {
@@ -304,16 +300,8 @@ function endGame(condition) {
       messageMood = 3;
       break;
   }
-
   messageSay += '<br><br><button id="playAgain" onclick="playAgain()">Play again?</button>';
-
-  //document.getElementById("playAgain").addEventListener("click",function(){message.innerHTML += ";P";}, false);
-
-  //var playAgainButton = document.getElementById("playAgain");
-  //playAgainButton.addEventListener("click",location.reload(),false);
-
   window.removeEventListener("keydown", keydownHandler, false);
-
   render();
 }
 
