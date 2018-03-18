@@ -20,13 +20,12 @@ var audio_fillup = new Audio ('../audio/fillup.wav');
 var audio_game_lose = new Audio ('../audio/game_lose.wav');
 var audio_game_win = new Audio ('../audio/game_win.wav');
 var audio_woosh = new Audio ('../audio/woosh.wav');
-var audio_fight_start = new Audio ('../audio/fight_start.wav')
-var audio_fight_win = new Audio ("../audio/fight_win.wav")
-var audio_fight_lose = new Audio ("../audio/fight_lose.wav")
+var audio_fight_win = new Audio ("../audio/fight_win.wav");
+var audio_fight_lose = new Audio ("../audio/fight_lose.wav");
 
 function playSfx(clip) {
   if (soundEnabled == true) {
-    thisSoundCommand = clip + ".play();"
+    thisSoundCommand = clip + ".play();";
     eval(thisSoundCommand);
   } else {
     //do nothing.
@@ -82,7 +81,7 @@ var shipColumn;
 var shipRow;
 for(var row = 0; row < ROWS; row++) {
     for(var column = 0; column <COLUMNS; column++) {
-      if(gameObjects[row][column] == SHIP) {
+      if (gameObjects[row][column] == SHIP) {
         shipRow = row;
         shipColumn = column;
       }
@@ -95,13 +94,22 @@ var credits = 10;
 var xp = 0;
 messageSay = "Use the arrow keys to travel around.<br>Before you return home, you must go to the shop and pay off the bounty on your head.";
 var messageMood = 0;
-var bounty = 100;
+var bounty = 150;
 
 render();
 
+function checkForLoss() {
+  //check if the player is out of fuel or credits
+  if (fuel <= 0) {
+    endGame("FUEL");
+  } else if (credits <= 0) {
+    endGame("CREDITS");
+  }
+}
+
 function render() {
   //clear map
-  if(map.hasChildNodes()) {
+  if (map.hasChildNodes()) {
     for(var i=0; i<ROWS*COLUMNS; i++) {
       map.removeChild(map.firstChild);
     }
@@ -170,7 +178,7 @@ function keydownHandler(event) {
   switch(event.keyCode){
     case UP:
       //move ship up one row in gameObjects array
-      if(shipRow>0) {
+      if (shipRow>0) {
         gameObjects[shipRow][shipColumn] = 0;
         shipRow--;
         //burn fuel
@@ -180,7 +188,7 @@ function keydownHandler(event) {
       break;
     case DOWN:
       //move ship down one row in gameObjects array
-      if(shipRow<ROWS-1) {
+      if (shipRow<ROWS-1) {
         gameObjects[shipRow][shipColumn] = 0;
         shipRow++;
         //burn fuel
@@ -190,7 +198,7 @@ function keydownHandler(event) {
       break;
     case LEFT:
       //move ship left one col in gameObjects array
-      if(shipColumn>0) {
+      if (shipColumn>0) {
         gameObjects[shipRow][shipColumn] = 0;
         shipColumn--;
         //burn fuel
@@ -200,7 +208,7 @@ function keydownHandler(event) {
       break;
     case RIGHT:
       //move ship right one col in gameObjects array
-      if(shipColumn<COLUMNS-1) {
+      if (shipColumn<COLUMNS-1) {
         gameObjects[shipRow][shipColumn] = 0;
         shipColumn++;
         //burn fuel
@@ -223,41 +231,42 @@ function keydownHandler(event) {
       trade();
       break;
     case HOMEWORLD:
-      endGame("HOME");
+      homeworld();
       break;
     case SHOP:
       payOff();
       break;
   }
   playSfx("audio_woosh");
-  //check if the player is out of fuel or credits
-  if(fuel <= 0 || credits <= 0) {
-    endGame("FUEL");
-  }
+  checkForLoss();
   //render the game
   render();
 }
 
 function plural(number) {
-  if(number>1){return "s";}
+  if (number>1){return "s";}
   return "";
 }
 
 function fight() {
   var winProbability = 0.2;
-  var attack = Math.ceil((fuel + credits + xp) / 2);
+  var attack = Math.ceil((fuel + credits + (2 * xp) / 2));
   var defence = Math.ceil(Math.random() * attack / (1 - winProbability));
   var penalty = Math.round(defence / 2);
-  messageSay = "Your attack: " + attack + "<br>Their defence: " + defence;
-  if(attack>=defence) {
-    credits += penalty;
-    xp += 50;
+  console.log(attack);
+  console.log(defence);
+  if (attack>=defence) {
+    playSfx("audio_fight_win");
+    credits += Math.floor(1 / penalty);
+    xp += 5 * (attack - defence);
     messageSay = "You fight and WIN " + penalty + " credit" + plural(penalty) + ".";
   } else {
-    credits -= penalty;
-    xp += 20;
+    playSfx("audio_fight_win");
+    credits -= Math.floor(1 / penalty);
+    xp += 2 * (0 - attack - defence);
     messageSay = "You fight and LOOSE " + penalty + " credit" + plural(penalty) + ".";
   }
+  console.log(penalty);
 }
 
 function trade() {
@@ -265,7 +274,7 @@ function trade() {
   var cost = Math.ceil(Math.random()*planetFuel);
   var r = confirm("At this planet, fuel will cost you " + cost + " credit" + plural(cost) + ".\nYou will gain " + planetFuel + " cell" + plural(planetFuel) + ".\nDo you wish to continue?");
   if (r) {
-    if(credits>cost) {
+    if (credits>cost) {
       fuel += planetFuel;
       credits -= cost;
       xp += 20;
@@ -302,14 +311,15 @@ function payOff() {
       credits -= toPay;
       messageMood = 2;
       messageSay = "You have paid " + toPay + " credits off your bounty. Your bounty is now " + bounty + " credits.";
-      playSfx(audio_shop_bell);
+      playSfx("audio_shop_bell");
+      render();
     }
   }
   render();
 }
 
 function homeworld() {
-
+  endGame("HOME");
 }
 
 function endGame(condition) {
@@ -317,12 +327,17 @@ function endGame(condition) {
     case "HOME":
       messageSay = "You made it home alive!";
       messageMood = 2;
-      playSfx(audio_game_win);
+      playSfx("audio_game_win");
       break;
     case "FUEL":
-      messageSay = "You ran out of fuel.";
+      messageSay = "You ran out of fuel and crashed.";
       messageMood = 3;
-      playSfx(audio_game_lose);
+      playSfx("audio_game_lose");
+      break;
+    case "CREDITS":
+      messageSay = "You ran out of credits and got caught by the Space Police.";
+      messageMood = 3;
+      playSfx("audio_game_lose");
       break;
   }
   messageSay += '<br><br><button id="playAgain" onclick="playAgain()">Play again?</button>';
