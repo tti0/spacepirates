@@ -1,5 +1,9 @@
 //Space Pirates Game
 
+var soundEnabled = true;
+//if you do not want sound, uncomment the following line, and comment out the preceeding line.
+//var soundEnabled = false;
+
 //environment variables
 var map = document.getElementById("map");
 var message = document.getElementById("messageInside");
@@ -19,6 +23,15 @@ var audio_woosh = new Audio ('../audio/woosh.wav');
 var audio_fight_start = new Audio ('../audio/fight_start.wav')
 var audio_fight_win = new Audio ("../audio/fight_win.wav")
 var audio_fight_lose = new Audio ("../audio/fight_lose.wav")
+
+function playSfx(clip) {
+  if (soundEnabled == true) {
+    thisSoundCommand = clip + ".play();"
+    eval(thisSoundCommand);
+  } else {
+    //do nothing.
+  }
+}
 
 //event listeners
 window.addEventListener("keydown", keydownHandler, false);
@@ -214,7 +227,9 @@ function keydownHandler(event) {
       break;
     case SHOP:
       payOff();
+      break;
   }
+  playSfx("audio_woosh");
   //check if the player is out of fuel or credits
   if(fuel <= 0 || credits <= 0) {
     endGame("FUEL");
@@ -269,20 +284,28 @@ function payOff() {
     messageSay = "You have already paid off your bounty!";
     messageMood = 2;
   } else {
-    while (true) {
-      var toPay = prompt("How much of your bounty do you wish to pay off?\nYour bounty is currently " + bounty + " credit" + plural(credits) + ".\nYou currently have " + credits + " credit" + plural(credits) + ".\n(You can only pay off whole numbers.)");
-      if (typeof toPay === 'string' || toPay instanceof String) {
-        if (confirm("You did not enter a whole number. Would you like to try again?")) {
-          // do nothing
-        } else {
-          break;
-        }
-      } else {
-        break;
-      }
+    var toPay = prompt("How much of your bounty do you wish to pay off?\nYour bounty is currently " + bounty + " credit" + plural(credits) + ".\nYou currently have " + credits + " credit" + plural(credits) + ".\n(You can only pay off whole numbers.)");
+    if (typeof toPay == 'stringValue' || typeof toPay == 'objectValue') {
+      messageSay = 'You did not enter a whole number. Please come back again later.';
+      messageMood = 0;
+    } else if (toPay % 1 != 0) {
+      messageSay = 'You did not enter a whole number. Please come back again later.';
+      messageMood = 0;
+    } else if (toPay > credits) {
+      messageSay = 'You do not have enough credits to pay off this amount. Please come back again later.';
+      messageMood = 0;
+    } else if (toPay > bounty) {
+      messageSay = 'You are trying to pay off an amount larger than your bounty. Please come back again later.';
+      messageMood = 0;
+    } else {
+      bounty -= toPay;
+      credits -= toPay;
+      messageMood = 2;
+      messageSay = "You have paid " + toPay + " credits off your bounty. Your bounty is now " + bounty + " credits.";
+      playSfx(audio_shop_bell);
     }
-    alert("After yay!");
   }
+  render();
 }
 
 function homeworld() {
@@ -294,10 +317,12 @@ function endGame(condition) {
     case "HOME":
       messageSay = "You made it home alive!";
       messageMood = 2;
+      playSfx(audio_game_win);
       break;
     case "FUEL":
       messageSay = "You ran out of fuel.";
       messageMood = 3;
+      playSfx(audio_game_lose);
       break;
   }
   messageSay += '<br><br><button id="playAgain" onclick="playAgain()">Play again?</button>';
